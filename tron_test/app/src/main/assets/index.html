@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tron: Disc Battle FPV</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- 3D WebGL Canvas -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- Subtle CRT Scanlines -->
+        <div class="scanlines"></div>
+
+        <!-- 1. Main Menu View -->
+        <div id="view-menu" class="ui-layer">
+            <div class="menu-top-bar">
+                <div class="profile-input-wrap">
+                    <span style="font-size: 11px; color: #00f0ff;">USER //</span>
+                    <input id="menu-username-input" type="text" value="Flynn" maxlength="14" placeholder="Enter Name">
+                </div>
+                <div style="font-size: 11px; letter-spacing: 2px; color: #00f0ff;">SYSTEM V9.0 // 4-PLAYER LAN</div>
+            </div>
+
+            <div class="menu-center">
+                <div class="title-sub">FIRST-PERSON COMBAT GRID</div>
+                <div class="title-main">TRON: DISC BATTLE</div>
+            </div>
+
+            <div class="menu-actions">
+                <button id="btn-play-solo" class="btn-tron">SOLO BOT ARENA</button>
+                <button id="btn-host-lan" class="btn-tron btn-tron-orange">HOST LAN SERVER</button>
+                <button id="btn-join-lan" class="btn-tron">JOIN LAN GAME</button>
+                <button id="btn-open-leaderboard" class="btn-tron">LEADERBOARD</button>
+                <button id="btn-open-editor" class="btn-tron">LEVEL EDITOR</button>
+            </div>
+
+            <div class="menu-footer">
+                <div>FIRST-PERSON PERSPECTIVE</div>
+                <div>OFFLINE & LOCAL WI-FI MULTIPLAYER</div>
+            </div>
+        </div>
+
+        <!-- 2. Modal: Join LAN Game (Minecraft Style) -->
+        <div id="modal-join-lan" class="modal-overlay">
+            <div class="modal-content" style="width: 480px;">
+                <div class="modal-title">DISCOVER LAN SERVERS</div>
+
+                <div class="form-group">
+                    <label>AVAILABLE HOSTS ON LOCAL WI-FI</label>
+                    <div id="discovered-servers-list" style="min-height: 90px; max-height: 150px; overflow-y: auto; border: 1px solid rgba(0,240,255,0.3); padding: 8px;">
+                        <div style="color: #667788; padding: 10px;">Searching local network for hosts...</div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 14px;">
+                    <label>OR DIRECT IP CONNECT</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input id="input-direct-ip" type="text" class="form-input" style="flex: 1;" placeholder="e.g. 192.168.1.15">
+                        <button id="btn-direct-connect" class="btn-tron-small btn-tron">CONNECT</button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 18px;">
+                    <button id="btn-join-close" class="btn-tron btn-tron-orange">CANCEL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. View: LAN Game Lobby (Up to 4 Players) -->
+        <div id="view-lobby" class="ui-layer">
+            <div style="text-align: center;">
+                <div id="lobby-title" style="font-family: 'Orbitron', sans-serif; font-size: 20px; color: #00f0ff; letter-spacing: 2px;">GRID ARENA LOBBY</div>
+                <div style="font-size: 12px; color: #8899aa; margin-top: 4px;">4-PLAYER LAN DISPATCH MATRIX</div>
+            </div>
+
+            <div id="lobby-players-list" style="max-width: 520px; width: 100%; margin: 0 auto;"></div>
+
+            <div style="display: flex; justify-content: center; gap: 16px;">
+                <button id="btn-lobby-start" class="btn-tron" style="padding: 14px 40px; font-size: 15px;">START GRID MATCH</button>
+                <button id="btn-lobby-back" class="btn-tron btn-tron-orange">LEAVE LOBBY</button>
+            </div>
+        </div>
+
+        <!-- 4. View: In-Game First-Person Visor HUD -->
+        <div id="view-hud" class="ui-layer">
+            <div class="fpv-visor-frame"></div>
+
+            <!-- Top Match Progress -->
+            <div class="fpv-match-progress">
+                <span style="color: #00f0ff;">SCORE: <strong id="hud-score" style="color:#fff;">0</strong></span>
+                <span class="hud-divider">|</span>
+                <span style="color: #ffaa00;">KILLS: <strong id="hud-kills" style="color:#fff;">0/3</strong></span>
+                <span class="hud-divider">|</span>
+                <span style="color: #88ccee; font-size: 11px;">FIRST TO 3 WINS</span>
+            </div>
+
+            <!-- Top 360° Compass Radar Strip -->
+            <div class="compass-container">
+                <div id="compass-radar-strip"></div>
+            </div>
+
+            <!-- Center First-Person Crosshair -->
+            <div class="fpv-crosshair">
+                <div id="crosshair-lock"></div>
+                <div class="crosshair-pip"></div>
+                <div id="crosshair-dist">--</div>
+            </div>
+
+            <!-- Top-Right Killfeed -->
+            <div id="fpv-killfeed"></div>
+
+            <!-- Bottom-Left Player Status -->
+            <div class="fpv-player-stats">
+                <div class="stat-row">
+                    <span style="color: #00f0ff;">INTEGRITY</span>
+                    <span id="player-hp-num" style="color: #00f0ff;">100%</span>
+                </div>
+                <div class="bar-bg">
+                    <div id="player-hp-fill" class="bar-fill"></div>
+                </div>
+
+                <div class="stat-row" style="margin-top: 4px;">
+                    <span style="color: #00ffaa; font-size: 10px;">DEFLECT MATRIX</span>
+                </div>
+                <div class="bar-bg" style="height: 6px;">
+                    <div id="shield-fill" class="bar-fill shield-fill"></div>
+                </div>
+            </div>
+
+            <!-- Dynamic Notification Banner -->
+            <div id="round-status-banner">GRID BATTLE</div>
+
+            <!-- Touch Controls Layer (Dedicated Joystick + Look Drag + Action Buttons) -->
+            <div id="fpv-touch-layer">
+                <!-- Left 45% Move Zone -->
+                <div id="fpv-joystick-zone">
+                    <div id="fpv-joystick-base">
+                        <div id="fpv-joystick-thumb"></div>
+                    </div>
+                </div>
+
+                <!-- Right 55% Look Zone -->
+                <div id="fpv-look-zone"></div>
+
+                <!-- Action Buttons Cluster (Independent layer) -->
+                <div class="fpv-action-pad">
+                    <button id="btn-fpv-throw" class="fpv-action-btn btn-throw-main">THROW DISC</button>
+                    <button id="btn-fpv-shield" class="fpv-action-btn">SHIELD</button>
+                    <button id="btn-fpv-recall" class="fpv-action-btn">RECALL</button>
+                    <button id="btn-fpv-dash" class="fpv-action-btn">DASH</button>
+                    <button id="btn-fpv-curve" class="fpv-action-btn">STRAIGHT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. View: Match Over & Victory Screen -->
+        <div id="view-gameover" class="ui-layer">
+            <div class="gameover-container">
+                <div id="gameover-title" class="gameover-title">GRID CHAMPION</div>
+                <div id="gameover-subtitle" class="gameover-sub">MATCH CYCLE COMPLETE // VICTORY SECURED</div>
+
+                <div class="match-stats-row">
+                    <div class="stat-box">
+                        <div class="stat-lbl">YOUR KILLS</div>
+                        <div id="go-kills" class="stat-val" style="color: #ffaa00;">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-lbl">WIN SCORE</div>
+                        <div id="go-score" class="stat-val" style="color: #00f0ff;">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-lbl">ARENA</div>
+                        <div id="go-arena" class="stat-val" style="color: #cc44ff;">COLISEUM</div>
+                    </div>
+                </div>
+
+                <div class="leaderboard-section">
+                    <div class="leaderboard-header">
+                        <span>GLOBAL GRID LEADERBOARD (SUPABASE LIVE)</span>
+                        <span id="lb-sync-status" style="font-size: 11px; color: #00ffaa;">SYNCED</span>
+                    </div>
+                    <div class="leaderboard-table-wrap">
+                        <table class="tron-table">
+                            <thead>
+                                <tr>
+                                    <th>RANK</th>
+                                    <th>PROGRAM</th>
+                                    <th>WIN SCORE</th>
+                                    <th>KILLS</th>
+                                    <th>ARENA</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gameover-leaderboard-body">
+                                <tr><td colspan="5" style="text-align:center; color:#667788; padding: 10px;">Loading global champions...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 14px; margin-top: 10px; justify-content: center;">
+                    <button id="btn-rematch" class="btn-tron">PLAY AGAIN</button>
+                    <button id="btn-menu" class="btn-tron btn-tron-orange">MAIN MENU</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Modal: Standalone Supabase Leaderboard Modal -->
+        <div id="modal-leaderboard" class="modal-overlay">
+            <div class="modal-content" style="width: 540px;">
+                <div class="modal-title">SUPABASE GRID LEADERBOARD</div>
+                <div class="leaderboard-table-wrap" style="max-height: 280px; overflow-y: auto;">
+                    <table class="tron-table">
+                        <thead>
+                            <tr>
+                                <th>RANK</th>
+                                <th>PROGRAM</th>
+                                <th>WIN SCORE</th>
+                                <th>KILLS</th>
+                                <th>ARENA</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-leaderboard-body">
+                            <tr><td colspan="5" style="text-align:center; color:#667788; padding: 12px;">Fetching from Supabase...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align: center; margin-top: 16px;">
+                    <button id="btn-leaderboard-close" class="btn-tron btn-tron-orange">CLOSE</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. Modal: Level Editor -->
+        <div id="modal-editor" class="modal-overlay">
+            <div class="modal-content" style="width: 500px;">
+                <div class="modal-title">GRID ARCHITECT // LEVEL EDITOR</div>
+
+                <div class="form-group">
+                    <label>ARENA NAME</label>
+                    <input id="editor-arena-name" type="text" class="form-input" value="User Grid Alpha">
+                </div>
+
+                <div style="display: flex; gap: 12px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>SHAPE</label>
+                        <select id="editor-shape" class="form-select">
+                            <option value="circle">CIRCULAR COLISEUM</option>
+                            <option value="hexagon">HEXAGON CORE</option>
+                            <option value="octagon" selected>OCTAGONAL RING</option>
+                            <option value="square">SQUARE GAUNTLET</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>THEME</label>
+                        <select id="editor-color" class="form-select">
+                            <option value="#00f0ff" selected>CYAN</option>
+                            <option value="#ff3b00">ORANGE</option>
+                            <option value="#ffb300">GOLD</option>
+                            <option value="#00ff88">EMERALD</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>ARENA RADIUS: <span id="editor-radius-val" style="color: #00f0ff;">18m</span></label>
+                    <input id="editor-radius" type="range" min="14" max="24" value="18" style="accent-color: #00f0ff;">
+                </div>
+
+                <div class="form-group">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <label>REBOUND PYLONS</label>
+                        <button id="btn-add-pylon" class="btn-tron-small btn-tron">+ ADD PYLON</button>
+                    </div>
+                    <div id="editor-pylons-list" style="max-height: 100px; overflow-y: auto; border: 1px solid rgba(0,240,255,0.25); padding: 4px;"></div>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 14px;">
+                    <button id="btn-editor-play" class="btn-tron" style="flex: 2;">BATTLE NOW</button>
+                    <button id="btn-editor-save" class="btn-tron btn-tron-orange" style="flex: 1;">SAVE</button>
+                    <button id="btn-editor-close" class="btn-tron" style="flex: 1; border-color: #667788; color: #8899aa;">CLOSE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bundled Game Engine -->
+    <script src="bundle.js"></script>
+</body>
+</html>

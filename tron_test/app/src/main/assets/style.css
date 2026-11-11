@@ -1,0 +1,712 @@
+/* Tron: Legacy First-Person View & LAN Multiplayer Styling */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #020306;
+    font-family: 'Rajdhani', 'Orbitron', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #e0f7fa;
+}
+
+#game-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: #020306;
+}
+
+#game-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Subtle Tron Visor CRT Scanline */
+.scanlines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.28) 50%);
+    background-size: 100% 4px;
+    z-index: 10;
+    opacity: 0.3;
+}
+
+/* Common Cyber Tron Buttons */
+.btn-tron {
+    background: rgba(0, 240, 255, 0.1);
+    border: 1.5px solid #00f0ff;
+    color: #00f0ff;
+    padding: 12px 24px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.25), inset 0 0 10px rgba(0, 240, 255, 0.12);
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.btn-tron:active {
+    background: #00f0ff;
+    color: #000;
+    box-shadow: 0 0 25px #00f0ff;
+    transform: scale(0.95);
+}
+
+.btn-tron-orange {
+    border-color: #ff3b00;
+    color: #ff3b00;
+    background: rgba(255, 59, 0, 0.1);
+    box-shadow: 0 0 14px rgba(255, 59, 0, 0.25), inset 0 0 10px rgba(255, 59, 0, 0.12);
+}
+
+.btn-tron-orange:active {
+    background: #ff3b00;
+    color: #000;
+    box-shadow: 0 0 25px #ff3b00;
+}
+
+.btn-tron-small {
+    padding: 6px 14px;
+    font-size: 11px;
+}
+
+/* UI Layers */
+.ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+}
+
+/* --- View: Main Menu --- */
+#view-menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px 32px;
+    background: radial-gradient(circle at center, transparent 30%, rgba(2, 3, 6, 0.85) 100%);
+}
+
+.menu-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid #00f0ff;
+    padding: 4px 12px;
+}
+
+.profile-input-wrap input {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    outline: none;
+    width: 140px;
+}
+
+.menu-center {
+    text-align: center;
+}
+
+.title-sub {
+    font-size: 13px;
+    letter-spacing: 8px;
+    color: #88ccee;
+    text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+}
+
+.title-main {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 38px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: #fff;
+    text-shadow: 0 0 16px #00f0ff, 0 0 35px #00f0ff;
+}
+
+.menu-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.menu-footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: #557788;
+}
+
+/* --- View: In-Game FPV HUD --- */
+#view-hud {
+    display: none;
+    pointer-events: none;
+}
+
+/* FPV Cyber Helmet Visor Frame */
+.fpv-visor-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    box-shadow: inset 0 0 60px rgba(0, 240, 255, 0.15), inset 0 0 14px rgba(0, 240, 255, 0.3);
+    border: 1px solid rgba(0, 240, 255, 0.2);
+}
+
+/* Top Match Progress Indicator */
+.fpv-match-progress {
+    position: absolute;
+    top: 42px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(4, 8, 16, 0.85);
+    border: 1px solid rgba(0, 240, 255, 0.45);
+    padding: 4px 16px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+    z-index: 25;
+}
+
+.hud-divider {
+    color: #446688;
+}
+
+/* Top 360° Compass Radar Strip */
+.compass-container {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    height: 24px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    overflow: hidden;
+    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 100%, 0 100%);
+}
+
+#compass-radar-strip {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.radar-pip {
+    position: absolute;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    transition: left 0.1s linear;
+}
+
+/* Center FPV Crosshair */
+.fpv-crosshair {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#crosshair-lock {
+    width: 36px;
+    height: 36px;
+    border: 2px solid #00f0ff;
+    border-radius: 50%;
+    opacity: 0.2;
+    transition: all 0.2s ease;
+}
+
+.crosshair-pip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 4px;
+    height: 4px;
+    background: #00f0ff;
+    box-shadow: 0 0 6px #00f0ff;
+}
+
+#crosshair-dist {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 10px;
+    color: #00f0ff;
+    margin-top: 6px;
+    letter-spacing: 1px;
+}
+
+/* Top-Right Killfeed */
+#fpv-killfeed {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    pointer-events: none;
+}
+
+.killfeed-item {
+    background: rgba(0, 0, 0, 0.7);
+    border-left: 2px solid #00f0ff;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    transition: opacity 0.4s ease;
+}
+
+/* Bottom-Left Player Status */
+.fpv-player-stats {
+    position: absolute;
+    bottom: 18px;
+    left: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 220px;
+    pointer-events: none;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.bar-bg {
+    width: 100%;
+    height: 12px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    overflow: hidden;
+}
+
+.bar-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #00f0ff, #0099ff);
+    box-shadow: 0 0 10px #00f0ff;
+    transition: width 0.15s ease-out;
+}
+
+.shield-fill {
+    background: linear-gradient(90deg, #00ffaa, #00cc88);
+    box-shadow: 0 0 10px #00ffaa;
+}
+
+/* Center Notification Banner */
+#round-status-banner {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 26px;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 20px #00f0ff, 0 0 40px #00f0ff;
+    letter-spacing: 4px;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    pointer-events: none;
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* --- Touch Controls Layer (100% Responsive for Mobile) --- */
+#fpv-touch-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    pointer-events: none;
+    z-index: 25;
+}
+
+/* Left 45% is the movement joystick zone */
+#fpv-joystick-zone {
+    width: 45%;
+    height: 100%;
+    position: relative;
+    pointer-events: auto;
+    touch-action: none;
+}
+
+#fpv-joystick-base {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 240, 255, 0.6);
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.15) 0%, rgba(0, 240, 255, 0.03) 70%, transparent 100%);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), inset 0 0 15px rgba(0, 240, 255, 0.2);
+    transform: translate(-50%, -50%);
+    display: none;
+    pointer-events: none;
+}
+
+#fpv-joystick-thumb {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #00f0ff;
+    box-shadow: 0 0 20px #00f0ff;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+/* Right 55% is the look zone */
+#fpv-look-zone {
+    width: 55%;
+    height: 100%;
+    position: relative;
+    pointer-events: auto;
+    touch-action: none;
+}
+
+/* Dedicated Action Buttons Cluster */
+.fpv-action-pad {
+    position: absolute;
+    bottom: 20px;
+    right: 22px;
+    display: grid;
+    grid-template-columns: repeat(2, 78px);
+    grid-template-rows: 56px 68px 68px;
+    gap: 12px;
+    pointer-events: auto;
+    touch-action: none;
+    z-index: 35;
+}
+
+.fpv-action-btn {
+    width: 78px;
+    height: 68px;
+    border-radius: 12px;
+    background: rgba(10, 16, 28, 0.92);
+    border: 2px solid #00f0ff;
+    color: #00f0ff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: transform 0.06s ease, background 0.08s ease, box-shadow 0.08s ease;
+}
+
+.fpv-action-btn:active, .fpv-action-btn.active {
+    background: #00f0ff !important;
+    color: #000 !important;
+    box-shadow: 0 0 28px #00f0ff !important;
+    transform: scale(0.92);
+}
+
+.btn-throw-main {
+    grid-column: span 2;
+    width: 100%;
+    height: 56px;
+    font-size: 13px;
+    background: rgba(0, 240, 255, 0.22);
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+}
+
+/* --- View: LAN Lobby --- */
+#view-lobby {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 36px;
+    background: rgba(2, 3, 6, 0.92);
+}
+
+.lobby-player-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 16px;
+    background: rgba(0, 240, 255, 0.05);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    margin-bottom: 8px;
+}
+
+.slot-badge {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+}
+
+/* --- View: Match Over & Victory Screen --- */
+#view-gameover {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(3, 8, 18, 0.94) 20%, rgba(1, 2, 4, 0.98) 100%);
+    padding: 16px;
+    z-index: 50;
+}
+
+.gameover-container {
+    max-width: 620px;
+    width: 95%;
+    max-height: 94vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    background: rgba(6, 12, 22, 0.88);
+    border: 1.5px solid #00f0ff;
+    box-shadow: 0 0 35px rgba(0, 240, 255, 0.35);
+    padding: 16px 20px;
+    clip-path: polygon(14px 0, 100% 0, 100% calc(100% - 14px), calc(100% - 14px) 100%, 0 100%, 0 14px);
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+.gameover-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: #00f0ff;
+    letter-spacing: 4px;
+    text-shadow: 0 0 16px #00f0ff, 0 0 30px rgba(0, 240, 255, 0.6);
+    text-align: center;
+}
+
+.gameover-sub {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: #aaccdd;
+    text-align: center;
+}
+
+.match-stats-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+    margin: 4px 0;
+}
+
+.stat-box {
+    flex: 1;
+    background: rgba(0, 240, 255, 0.05);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    padding: 6px;
+    text-align: center;
+}
+
+.stat-lbl {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: #8899aa;
+}
+
+.stat-val {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.leaderboard-section {
+    width: 100%;
+    background: rgba(2, 4, 8, 0.75);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    padding: 8px 12px;
+}
+
+.leaderboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: #00f0ff;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+}
+
+.leaderboard-table-wrap {
+    width: 100%;
+    max-height: 180px;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+}
+
+.tron-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    letter-spacing: 1px;
+}
+
+.tron-table th {
+    text-align: left;
+    padding: 6px 8px;
+    color: #7799aa;
+    font-size: 10px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+}
+
+.tron-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: #e0f7fa;
+}
+
+.tron-table tr.highlight-local {
+    background: rgba(0, 240, 255, 0.16);
+    border-left: 3px solid #00f0ff;
+}
+
+.tron-table tr.highlight-local td {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+/* --- Modals with Smooth Native Touch Scrolling --- */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(2, 3, 6, 0.88);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 40;
+    touch-action: pan-y;
+}
+
+.modal-content {
+    background: #070a12;
+    border: 1.5px solid #00f0ff;
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.35);
+    padding: 20px 28px;
+    max-width: 90vw;
+    max-height: 85vh;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+    overscroll-behavior-y: contain !important;
+    clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+}
+
+#discovered-servers-list,
+#editor-pylons-list {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    touch-action: pan-y !important;
+    overscroll-behavior-y: contain !important;
+}
+
+input, select, textarea {
+    user-select: text !important;
+    -webkit-user-select: text !important;
+}
+
+.modal-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    color: #00f0ff;
+    letter-spacing: 2.5px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.server-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(0, 240, 255, 0.06);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    margin-bottom: 6px;
+}
+
+.form-group {
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-group label {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    color: #88ccee;
+}
+
+.form-input, .form-select {
+    background: #0d1320;
+    border: 1px solid #00f0ff;
+    color: #e0f7fa;
+    padding: 8px 12px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+}

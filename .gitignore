@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Android build outputs & local config
+tron_test/.gradle/
+tron_test/build/
+tron_test/*/build/
+tron_test/local.properties
+tron_test/.idea/
+tron_test/*.iml
+tron_test/*/*.iml
+
+# Screenshots & temporary files
+*.png
+*.log
+
+# Large binary / APK from repository tracking (Release downloads will host the APK)
+TronDiscBattle.apk
